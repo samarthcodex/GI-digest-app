@@ -1,0 +1,14 @@
+name: GI Daily Digest
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  run-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call digest endpoint
+        run: |
+          curl -X POST "${{ secrets.APP_URL }}/api/cron?token=${{ secrets.CRON_SECRET }}"

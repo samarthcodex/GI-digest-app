@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id            Int       @id @default(autoincrement())
+  pmid          String    @unique
+  doi           String?   @unique
+  title         String
+  abstract      String?
+  journal       String
+  publishedDate DateTime
+  authors       String
+  tags          Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  summary       Summary?
+  bookmarks     Bookmark[]
+}
+
+model Summary {
+  id            Int     @id @default(autoincrement())
+  articleId     Int     @unique
+  bottomLine    String
+  keyFindings   Json
+  studyType     String
+  whyItMatters  Json
+  limitations   Json
+  createdAt     DateTime @default(now())
+
+  article       Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  articleId Int
+  createdAt DateTime @default(now())
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId])
+}
